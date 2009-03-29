@@ -1,0 +1,6 @@
+29 Mar 2009 - version 0.1 - Tweets away
+---------------------------------------
+
+Featuring tweets of: 
+  - new, upcoming, last chance, & special offers
+
