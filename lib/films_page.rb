@@ -19,10 +19,10 @@ class FilmsPage
       begin
         details_url = "http://#{@host}" + film_block.xpath("h4/a").attr('href')
         
-        films << { :title         => film_block.xpath("h4/a").text,
-                   :tag_line      => film_block.xpath("p[1]").text,
-                   :special_offer => film_block.xpath("p[2]").text,
-                   :url           => details_url}.merge(film_details(details_url))
+        films << { :title         => tidy(film_block.xpath("h4/a").text),
+                   :tag_line      => tidy(film_block.xpath("p[1]").text),
+                   :special_offer => tidy(film_block.xpath("p[2]").text),
+                   :url           => details_url                            }.merge(film_details(details_url))
       rescue
         # do nothing
       end
