@@ -45,7 +45,7 @@ class Film
   end
 
   def should_tweet?
-    attribute_dirty?(:from) || (attribute_dirty?(:special_offer) && !special_offer.blank?)
+    attribute_dirty?(:from) || special_offer_dirty?
   end
   
   def tweet
@@ -54,8 +54,12 @@ class Film
 
 private
 
+  def special_offer_dirty?
+    attribute_dirty?(:special_offer) && !special_offer.blank?
+  end
+
   def text_for_tweet
-    if attribute_dirty?(:special_offer) && !special_offer.blank?
+    if special_offer_dirty?
       special_offer_text
     else
       regular_movie_text
