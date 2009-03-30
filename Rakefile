@@ -9,7 +9,7 @@ end
 
 namespace :git do
   desc "Push changes to remote repos"
-  task :push do
+  task :push_tags do
     sh "git push github --tags" # Github
   end
 end
