@@ -2,7 +2,7 @@ require 'rubygems'
 require 'spec'
 require 'fakeweb'
 
-require File.expand_path(File.dirname(__FILE__) + '/../virgin_movies.rb')
+require File.expand_path(File.dirname(__FILE__) + '/../lib/virgin_movies/virgin_movies.rb')
 
 FakeWeb.allow_net_connect = false
 
