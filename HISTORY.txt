@@ -1,3 +1,8 @@
+30 Mar 2009 - version 0.2.1
+---------------------------
+
+  * BUGFIX: don't tweet when nothing has changed
+
 30 Mar 2009 - version 0.2
 -------------------------
 

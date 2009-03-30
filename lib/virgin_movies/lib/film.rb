@@ -45,7 +45,7 @@ class Film
   end
 
   def should_tweet?
-    !(only_a_days_left_update? || zero_days_left?)
+    dirty_attributes.size > 0 && !(only_a_days_left_update? || zero_days_left?)
   end
   
   def tweet
