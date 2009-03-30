@@ -130,8 +130,86 @@ describe Film, "processing films" do
   end
 end
 
+describe Film, "processing films - removing files that are NOT included in the update" do
+  
+  before(:each) do
+    ::TWITTER.stub!(:status)
+    @film_1 = { :certificate    => "15", 
+                :title          => "Tropic Thunder", 
+                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                :from           => "Now showing", 
+                :genre          => "Action & Adventure, Comedy", 
+                :year           => "2008", 
+                :price          => "£3.99"}
+    @film_2 = { :certificate    => "15", 
+                :title          => "Tropic Thunder: The Director's Cut", 
+                :special_offer  => "",
+                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunderthedirectorscut/", 
+                :tag_line       => "Director’s cut of Ben Stiller’s crazy comedy.", 
+                :from           => "4 days left", 
+                :genre          => "Action & Adventure, Comedy", 
+                :year           => "2008", 
+                :price          => "£3.99"}
+    @film_3 = { :certificate    => "18", 
+                :title          => "Taken", 
+                :special_offer  => "",
+                :url            => "http://moviesondemand.virginmedia.com/movies/taken/", 
+                :tag_line       => "An ex-soldier (Liam Neeson) must save his kidnapped daughter", 
+                :from           => "30 March", 
+                :genre          => "Action & Adventure, Thriller & Crime", 
+                :year           => "2008", 
+                :price          => "£3.50"}
+  end
+  
+  it "should NOT remove films that are not included in the update if they were created in the last 60 days (so films aren't deleted if the scrape cocks up)" do
+    Film.process_films([@film_1, @film_2, @film_3])
+    film = Film.first(:title => "Tropic Thunder")
+    film.update_attributes(:created_on => Date.today + 60)
+    lambda { Film.process_films([@film_2, @film_3]) }.should_not change(Film, :count)
+  end
+  
+  it "should remove films that are not included in the update if they were created more than 60 days ago" do
+    Film.process_films([@film_1, @film_2, @film_3])
+    film = Film.first(:title => "Tropic Thunder")
+    film.update_attributes(:created_on => Date.today + 61)
+    lambda { Film.process_films([@film_2, @film_3]) }.should change(Film, :count).by(-1)
+  end
+end
 
-describe Film, "processing films - updating" do
+
+describe Film, "processing films - updating with new data" do
+  
+  before(:each) do
+    ::TWITTER.stub!(:status)
+    @film_1 = { :certificate    => "15", 
+                :title          => "Tropic Thunder", 
+                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                :from           => "Now showing", 
+                :genre          => "Action & Adventure, Comedy", 
+                :year           => "2008", 
+                :price          => "£3.99"}
+    @film_1_updated = { :certificate    => "15", 
+                        :title          => "Tropic Thunder", 
+                        :special_offer  => "",
+                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                        :from           => "5 days left", 
+                        :genre          => "Action & Adventure, Comedy", 
+                        :year           => "2008", 
+                        :price          => "£3.99"}
+  end
+
+  it "should update an existing film if it is processed with new data" do
+    Film.process_films([@film_1])
+    Film.process_films([@film_1_updated])
+    film = Film.first(:url => "http://moviesondemand.virginmedia.com/movies/tropicthunder/")
+    film.from.should == "5 days left"
+  end
+end
+
+describe Film, "processing films - tweeting" do
   
   before(:each) do
     ::TWITTER.stub!(:status)
@@ -197,27 +275,6 @@ describe Film, "processing films - updating" do
                         :genre          => "Action & Adventure, Thriller & Crime", 
                         :year           => "2028", 
                         :price          => "£3.50"}
-  end
-
-  it "should update a film if it is processed with new data" do
-    Film.process_films([@film_1])
-    Film.process_films([@film_1_updated])
-    film = Film.first(:url => "http://moviesondemand.virginmedia.com/movies/tropicthunder/")
-    film.from.should == "5 days left"
-  end
-  
-  it "should NOT remove films that are not included in the update if they were created in the last 60 days (so films aren't deleted if the scrape cocks up)" do
-    Film.process_films([@film_1, @film_2, @film_3])
-    film = Film.first(:title => "Tropic Thunder")
-    film.update_attributes(:created_on => Date.today + 60)
-    lambda { Film.process_films([@film_2, @film_3]) }.should_not change(Film, :count)
-  end
-  
-  it "should remove films that are not included in the update if they were created more than 60 days ago" do
-    Film.process_films([@film_1, @film_2, @film_3])
-    film = Film.first(:title => "Tropic Thunder")
-    film.update_attributes(:created_on => Date.today + 61)
-    lambda { Film.process_films([@film_2, @film_3]) }.should change(Film, :count).by(-1)
   end
   
   it "should tweet an upcoming film if one is added" do
