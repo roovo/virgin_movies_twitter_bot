@@ -41,7 +41,7 @@ class Film
   
   def self.remove_expired_films(processed_films)
     processed_ids = processed_films.map { |f| f.id }
-    Film.all(:id.not => processed_ids, :created_on.gt => Date.today + FILMS_EXPIRE_AFTER_DAYS).destroy!
+    Film.all(:id.not => processed_ids, :created_on.lt => Date.today - FILMS_EXPIRE_AFTER_DAYS).destroy!
   end
 
   def should_tweet?

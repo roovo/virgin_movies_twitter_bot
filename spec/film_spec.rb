@@ -113,14 +113,14 @@ describe Film, "processing films - removing files that are NOT included in the u
   it "should NOT remove films that are not included in the update if they were created in the last 60 days (so films aren't deleted if the scrape cocks up)" do
     Film.process_films([@film_1, @film_2, @film_3])
     film = Film.first(:title => "Tropic Thunder")
-    film.update_attributes(:created_on => Date.today + 60)
+    film.update_attributes(:created_on => Date.today - 60)
     lambda { Film.process_films([@film_2, @film_3]) }.should_not change(Film, :count)
   end
   
   it "should remove films that are not included in the update if they were created more than 60 days ago" do
     Film.process_films([@film_1, @film_2, @film_3])
     film = Film.first(:title => "Tropic Thunder")
-    film.update_attributes(:created_on => Date.today + 61)
+    film.update_attributes(:created_on => Date.today - 61)
     lambda { Film.process_films([@film_2, @film_3]) }.should change(Film, :count).by(-1)
   end
 end
