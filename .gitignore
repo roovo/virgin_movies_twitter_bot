@@ -1,2 +1,3 @@
 config/twitter_config.yml
 db/*.db
+log/*.log

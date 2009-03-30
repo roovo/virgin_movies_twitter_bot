@@ -1,4 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/lib/virgin_movies/virgin_movies.rb')
+require File.expand_path(File.dirname(__FILE__) + '/lib/twitterer/twitterer.rb')
 
 # setup database
 database_path = File.expand_path(File.join(File.dirname(__FILE__), 'db', 'virgin_movies.db'))

@@ -1,2 +1,3 @@
-login:    twitter_login
-password: twitter_password
+login:        twitter_login
+password:     twitter_password
+log_file:     tweet_log                  # if set will log tweets to file instead of sending to Twitter
