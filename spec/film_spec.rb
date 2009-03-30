@@ -1,69 +1,31 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper.rb')
 
-describe Film, "processing films" do
+describe Film, "processing films - validation" do
   
   before(:each) do
     ::TWITTER.stub!(:status)
-    @no_title = {       :certificate    => "15", 
-                        :title          => "", 
-                        :special_offer  => "",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                        :from           => "Now showing", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "2008", 
-                        :price          => "£3.99"}
-    @no_url = {         :certificate    => "15", 
-                        :title          => "Tropic Thunder", 
-                        :special_offer  => "",
-                        :url            => "", 
-                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                        :from           => "Now showing", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "2008", 
-                        :price          => "£3.99"}
-    @no_price = {       :certificate    => "15", 
-                        :title          => "Tropic Thunder", 
-                        :special_offer  => "",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                        :from           => "Now showing", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "2008", 
-                        :price          => ""}
-    @no_certificate = { :certificate    => "", 
-                        :title          => "Tropic Thunder", 
-                        :special_offer  => "",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                        :from           => "Now showing", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "2008", 
-                        :price          => "£3.99"}
-    @no_year = {        :certificate    => "15", 
-                        :title          => "Tropic Thunder", 
-                        :special_offer  => "",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                        :from           => "Now showing", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "", 
-                        :price          => "£3.99"}
-    @no_from = {        :certificate    => "15", 
-                        :title          => "Tropic Thunder", 
-                        :special_offer  => "",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                        :from           => "", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "2008", 
-                        :price          => "£3.99"}
-    @minimum_info = {   :certificate    => "15", 
-                        :title          => "Tropic Thunder", 
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                        :from           => "Now showing", 
-                        :year           => "2008", 
-                        :price          => "£3.99"}
+    film_params = { :certificate    => "15", 
+                    :title          => "Tropic Thunder", 
+                    :special_offer  => "Available for £1.50 from 27/03/09 to 02/04/09",
+                    :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                    :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                    :from           => "Now showing", 
+                    :genre          => "Action & Adventure, Comedy", 
+                    :year           => "2008", 
+                    :price          => "£3.99" }
+                        
+    @no_title         = film_params.merge(:title        => "")
+    @no_url           = film_params.merge(:url          => "")
+    @no_price         = film_params.merge(:price        => "")
+    @no_certificate   = film_params.merge(:certificate  => "")
+    @no_year          = film_params.merge(:year         => "")
+    @no_from          = film_params.merge(:from         => "")
+    @minimum_info     = { :certificate    => "15", 
+                          :title          => "Tropic Thunder", 
+                          :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                          :from           => "Now showing", 
+                          :year           => "2008", 
+                          :price          => "£3.99"}
   end
 
   it "should NOT add a film to the database if it has no title" do
@@ -134,32 +96,18 @@ describe Film, "processing films - removing files that are NOT included in the u
   
   before(:each) do
     ::TWITTER.stub!(:status)
-    @film_1 = { :certificate    => "15", 
-                :title          => "Tropic Thunder", 
-                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                :from           => "Now showing", 
-                :genre          => "Action & Adventure, Comedy", 
-                :year           => "2008", 
-                :price          => "£3.99"}
-    @film_2 = { :certificate    => "15", 
-                :title          => "Tropic Thunder: The Director's Cut", 
-                :special_offer  => "",
-                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunderthedirectorscut/", 
-                :tag_line       => "Director’s cut of Ben Stiller’s crazy comedy.", 
-                :from           => "4 days left", 
-                :genre          => "Action & Adventure, Comedy", 
-                :year           => "2008", 
-                :price          => "£3.99"}
-    @film_3 = { :certificate    => "18", 
-                :title          => "Taken", 
-                :special_offer  => "",
-                :url            => "http://moviesondemand.virginmedia.com/movies/taken/", 
-                :tag_line       => "An ex-soldier (Liam Neeson) must save his kidnapped daughter", 
-                :from           => "30 March", 
-                :genre          => "Action & Adventure, Thriller & Crime", 
-                :year           => "2008", 
-                :price          => "£3.50"}
+    film_params = { :certificate    => "15", 
+                    :title          => "Tropic Thunder", 
+                    :special_offer  => "Available for £1.50 from 27/03/09 to 02/04/09",
+                    :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                    :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                    :from           => "Now showing", 
+                    :genre          => "Action & Adventure, Comedy", 
+                    :year           => "2008", 
+                    :price          => "£3.99" }
+    @film_1 = film_params
+    @film_2 = film_params.merge(:url => "http://moviesondemand.virginmedia.com/movies/tropicthunderthedirectorscut/")
+    @film_3 = film_params.merge(:url => "http://moviesondemand.virginmedia.com/movies/taken/")
   end
   
   it "should NOT remove films that are not included in the update if they were created in the last 60 days (so films aren't deleted if the scrape cocks up)" do
@@ -182,28 +130,20 @@ describe Film, "processing films - updating with new data" do
   
   before(:each) do
     ::TWITTER.stub!(:status)
-    @film_1 = { :certificate    => "15", 
-                :title          => "Tropic Thunder", 
-                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                :from           => "Now showing", 
-                :genre          => "Action & Adventure, Comedy", 
-                :year           => "2008", 
-                :price          => "£3.99"}
-    @film_1_updated = { :certificate    => "15", 
-                        :title          => "Tropic Thunder", 
-                        :special_offer  => "",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                        :from           => "5 days left", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "2008", 
-                        :price          => "£3.99"}
+    @film = { :certificate    => "15", 
+              :title          => "Tropic Thunder", 
+              :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+              :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+              :from           => "Now showing", 
+              :genre          => "Action & Adventure, Comedy", 
+              :year           => "2008", 
+              :price          => "£3.99"}
+    @film_updated = @film.merge(:from => "5 days left")
   end
 
   it "should update an existing film if it is processed with new data" do
-    Film.process_films([@film_1])
-    Film.process_films([@film_1_updated])
+    Film.process_films([@film])
+    Film.process_films([@film_updated])
     film = Film.first(:url => "http://moviesondemand.virginmedia.com/movies/tropicthunder/")
     film.from.should == "5 days left"
   end
@@ -213,65 +153,52 @@ describe Film, "processing films - tweeting newly added films" do
   
   before(:each) do
     ::TWITTER.stub!(:status)
-    @film_1 = { :certificate    => "15", 
-                :title          => "Tropic Thunder", 
-                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                :from           => "Now showing", 
-                :genre          => "Action & Adventure, Comedy", 
-                :year           => "2008", 
-                :price          => "£3.99"}
-    @film_2 = { :certificate    => "15", 
-                :title          => "Tropic Thunder: The Director's Cut", 
-                :special_offer  => "",
-                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunderthedirectorscut/", 
-                :tag_line       => "Director’s cut of Ben Stiller’s crazy comedy.", 
-                :from           => "4 days left", 
-                :genre          => "Action & Adventure, Comedy", 
-                :year           => "2008", 
-                :price          => "£3.99"}
-    @film_3 = { :certificate    => "18", 
-                :title          => "Taken", 
-                :special_offer  => "",
-                :url            => "http://moviesondemand.virginmedia.com/movies/taken/", 
-                :tag_line       => "An ex-soldier (Liam Neeson) must save his kidnapped daughter", 
-                :from           => "30 March", 
-                :genre          => "Action & Adventure, Thriller & Crime", 
-                :year           => "2008", 
-                :price          => "£3.50"}
-    @film_1_special = @film_1.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
-    @film_2_special = @film_2.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
-    @film_3_special = @film_3.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
+    film_params = { :certificate    => "15", 
+                    :title          => "Tropic Thunder", 
+                    :special_offer  => "",
+                    :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                    :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                    :from           => "30 March", 
+                    :genre          => "Action & Adventure, Comedy", 
+                    :year           => "2008", 
+                    :price          => "£3.99" }
+    @film_upcoming    = film_params
+    @film_now_showing = film_params.merge(:from => "Now showing")
+    @film_last_chance = film_params.merge(:from => "4 days left")
+
+    @film_upcoming_special    = @film_upcoming.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
+    @film_now_showing_special = @film_now_showing.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
+    @film_last_chance_special = @film_last_chance.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
   end
   
   it "should tweet an upcoming film if one is added" do
-    TWITTER.should_receive(:status).with(:post, "[From 30 March] Taken (18, 2008, £3.50) Action & Adventure, Thriller & Crime. An ex-soldier (Liam Neeson) must save his kidnapped daughter")
-    Film.process_films([@film_3])
+    TWITTER.should_receive(:status).with(:post, "[From 30 March] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_upcoming])
   end
   
   it "should tweet a now showing film if one is added" do
     TWITTER.should_receive(:status).with(:post, "[Available Now] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
-    Film.process_films([@film_1])
+    Film.process_films([@film_now_showing])
   end
   
   it "should tweet a last chance film if one is added" do
-    TWITTER.should_receive(:status).with(:post, "[Last Chance: 4 days left] Tropic Thunder: The Director's Cut (15, 2008, £3.99) Action & Adventure, Comedy. Director’s cut of Ben Stil...")
-    Film.process_films([@film_2])
+    TWITTER.should_receive(:status).with(:post, "[Last Chance: 4 days left] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an act...")
+    Film.process_films([@film_last_chance])
   end
   
   it "should tweet an upcoming film as a special offer if it is added with a special offer" do
-    TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Taken (18, 2008) Action & Adventure, Thriller & Crime. An ex-soldier (Liam Neeson) must save his...")
-    Film.process_films([@film_3_special])
+    TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Tropic Thunder (15, 2008) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in ...")
+    Film.process_films([@film_upcoming_special])
   end
   
   it "should tweet a now showing film as a special offer if one is added with a special offer" do
     TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Tropic Thunder (15, 2008) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in ...")
-    Film.process_films([@film_1_special])
+    Film.process_films([@film_now_showing_special])
   end
   
   it "should tweet a last chance film  as a special offerif one is added with a special offer" do
-    TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Tropic Thunder: The Director's Cut (15, 2008) Action & Adventure, Comedy. Director’s cut of Be...")
-    Film.process_films([@film_2_special])
+    TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Tropic Thunder (15, 2008) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in ...")
+    Film.process_films([@film_last_chance_special])
   end
 end
 
@@ -279,82 +206,130 @@ describe Film, "processing films - tweeting updated films" do
   
   before(:each) do
     ::TWITTER.stub!(:status)
-    @film_1 = { :certificate    => "15", 
-                :title          => "Tropic Thunder", 
-                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                :from           => "Now showing", 
-                :genre          => "Action & Adventure, Comedy", 
-                :year           => "2008", 
-                :price          => "£3.99"}
-    @film_1_updated = { :certificate    => "15", 
-                        :title          => "Tropic Thunder", 
-                        :special_offer  => "",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
-                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
-                        :from           => "5 days left", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "2008", 
-                        :price          => "£3.99"}
-    @film_2 = { :certificate    => "15", 
-                :title          => "Tropic Thunder: The Director's Cut", 
-                :special_offer  => "",
-                :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunderthedirectorscut/", 
-                :tag_line       => "Director’s cut of Ben Stiller’s crazy comedy.", 
-                :from           => "4 days left", 
-                :genre          => "Action & Adventure, Comedy", 
-                :year           => "2008", 
-                :price          => "£3.99"}
-    @film_2_updated = { :certificate    => "15", 
-                        :title          => "Tropic Thunder: The Director's Cut", 
-                        :special_offer  => "Available for £1.50 from 27/03/09 to 02/04/09",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunderthedirectorscut/", 
-                        :tag_line       => "Director’s cut of Ben Stiller’s crazy comedy.", 
-                        :from           => "4 days left", 
-                        :genre          => "Action & Adventure, Comedy", 
-                        :year           => "2008", 
-                        :price          => "£1.50"}
-    @film_3 = { :certificate    => "18", 
-                :title          => "Taken", 
-                :special_offer  => "",
-                :url            => "http://moviesondemand.virginmedia.com/movies/taken/", 
-                :tag_line       => "An ex-soldier (Liam Neeson) must save his kidnapped daughter", 
-                :from           => "30 March", 
-                :genre          => "Action & Adventure, Thriller & Crime", 
-                :year           => "2008", 
-                :price          => "£3.50"}
-    @film_3_updated = { :certificate    => "18", 
-                        :title          => "Taken", 
-                        :special_offer  => "",
-                        :url            => "http://moviesondemand.virginmedia.com/movies/taken/", 
-                        :tag_line       => "An ex-soldier (Liam Neeson) must save his kidnapped daughter", 
-                        :from           => "30 March", 
-                        :genre          => "Action & Adventure, Thriller & Crime", 
-                        :year           => "2028", 
-                        :price          => "£3.50"}
+    ::TWITTER.stub!(:status)
+    film_params = { :certificate    => "15", 
+                    :title          => "Tropic Thunder", 
+                    :special_offer  => "",
+                    :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                    :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                    :from           => "30 March", 
+                    :genre          => "Action & Adventure, Comedy", 
+                    :year           => "2008", 
+                    :price          => "£3.99" }
+    @film_upcoming              = film_params
+    @film_now_showing           = film_params.merge(:from => "Now showing")
+    @film_last_chance           = film_params.merge(:from => "4 days left")
+    @film_last_chance_next_day  = film_params.merge(:from => "3 days left")
+    @film_last_chance_no_days   = film_params.merge(:from => "0 days left")
+
+    @film_upcoming_special    = @film_upcoming.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
+    @film_now_showing_special = @film_now_showing.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
+    @film_last_chance_special = @film_last_chance.merge(:special_offer => "Available for £1.50 from 27/03/09 to 02/04/09")
+
+    @film_upcoming_new_year    = @film_upcoming.merge(:year => "2009")
+    @film_now_showing_new_year = @film_now_showing.merge(:year => "2009")
+    @film_last_chance_new_year = @film_last_chance.merge(:year => "2009")
   end
   
-  it "should re-tweet an upcoming film if it is updated and the from is left the same but it is made a special offer" do
-    Film.process_films([@film_1])
-    TWITTER.should_receive(:status).once
-    Film.process_films([@film_1_updated])
+  it "should re-tweet an upcoming film if it is updated to be now showing" do
+    Film.process_films([@film_upcoming])
+    TWITTER.should_receive(:status).with(:post, "[Available Now] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_now_showing])
   end
   
-  it "should re-tweet an upcoming film if it is updated and the special offer is changed and isn't blank" do
-    Film.process_films([@film_2])
-    TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Tropic Thunder: The Director's Cut (15, 2008) Action & Adventure, Comedy. Director’s cut of Be...")
-    Film.process_films([@film_2_updated])
+  it "should re-tweet an upcoming film if it is updated to be last chance" do
+    Film.process_films([@film_upcoming])
+    TWITTER.should_receive(:status).with(:post, "[Last Chance: 4 days left] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an act...")
+    Film.process_films([@film_last_chance])
   end
   
-  it "should NOT re-tweet an upcoming film if it is updated and the special offer is changed to being blank" do
-    Film.process_films([@film_2_updated])
+  it "should re-tweet an upcoming film if it is updated to be special offer" do
+    Film.process_films([@film_upcoming])
+    TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Tropic Thunder (15, 2008) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in ...")
+    Film.process_films([@film_upcoming_special])
+  end
+  
+  it "should re-tweet an upcoming film if it is updated with a new year" do
+    Film.process_films([@film_upcoming])
+    TWITTER.should_receive(:status).with(:post, "[From 30 March] Tropic Thunder (15, 2009, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_upcoming_new_year])
+  end
+  
+  it "should re-tweet a showing now film if it is updated to be upcoming" do
+    Film.process_films([@film_now_showing])
+    TWITTER.should_receive(:status).with(:post, "[From 30 March] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_upcoming])
+  end
+  
+  it "should re-tweet a showing now film if it is updated to be last chance" do
+    Film.process_films([@film_now_showing])
+    TWITTER.should_receive(:status).with(:post, "[Last Chance: 4 days left] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an act...")
+    Film.process_films([@film_last_chance])
+  end
+  
+  it "should re-tweet a showing now film if it is updated to be special offer" do
+    Film.process_films([@film_now_showing])
+    TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Tropic Thunder (15, 2008) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in ...")
+    Film.process_films([@film_now_showing_special])
+  end
+  
+  it "should re-tweet a showing now film if it is updated with a new year" do
+    Film.process_films([@film_now_showing])
+    TWITTER.should_receive(:status).with(:post, "[Available Now] Tropic Thunder (15, 2009, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_now_showing_new_year])
+  end
+  
+  it "should re-tweet a last chance film if it is updated to be now upcoming" do
+    Film.process_films([@film_last_chance])
+    TWITTER.should_receive(:status).with(:post, "[From 30 March] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_upcoming])
+  end
+  
+  it "should re-tweet a last chance film if it is updated to be showing now" do
+    Film.process_films([@film_last_chance])
+    TWITTER.should_receive(:status).with(:post, "[Available Now] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_now_showing])
+  end
+  
+  it "should re-tweet a last chance film if it is updated to be special offer" do
+    Film.process_films([@film_last_chance])
+    TWITTER.should_receive(:status).with(:post, "[Special Offer: Mar 27 - Apr 2 @ £1.50] Tropic Thunder (15, 2008) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in ...")
+    Film.process_films([@film_last_chance_special])
+  end
+  
+  it "should re-tweet a last chance film if it is updated with a new year" do
+    Film.process_films([@film_last_chance])
+    TWITTER.should_receive(:status).with(:post, "[Last Chance: 4 days left] Tropic Thunder (15, 2009, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an act...")
+    Film.process_films([@film_last_chance_new_year])
+  end
+  
+  it "should NOT re-tweet a last chance film if it is updated with different days left" do
+    Film.process_films([@film_last_chance])
     TWITTER.should_not_receive(:status)
-    Film.process_films([@film_2])
+    Film.process_films([@film_last_chance_next_day])
   end
   
-  it "should NOT re-tweet an upcoming film if it is updated but the from and special offer isn't changed" do
-    Film.process_films([@film_3])
+  it "should re-tweet a special offer upcoming film if it is no longer special offer" do
+    Film.process_films([@film_upcoming_special])
+    TWITTER.should_receive(:status).with(:post, "[From 30 March] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_upcoming])
+  end
+  
+  it "should re-tweet a special offer now showing film if it is no longer special offer" do
+    Film.process_films([@film_now_showing_special])
+    TWITTER.should_receive(:status).with(:post, "[Available Now] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an action film.")
+    Film.process_films([@film_now_showing])
+  end
+  
+  it "should re-tweet a special offer last chance film if it is no longer special offer" do
+    Film.process_films([@film_last_chance_special])
+    TWITTER.should_receive(:status).with(:post, "[Last Chance: 4 days left] Tropic Thunder (15, 2008, £3.99) Action & Adventure, Comedy. Ben Stiller and Jack Black play actors in an act...")
+    Film.process_films([@film_last_chance])
+  end
+  
+  it "should NOT re-tweet a special offer last chance film if it is no longer special offer but it has 0 days left" do
+    Film.process_films([@film_last_chance_special])
     TWITTER.should_not_receive(:status)
-    Film.process_films([@film_3_updated])
+    Film.process_films([@film_last_chance_no_days])
   end
 end

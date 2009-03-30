@@ -45,7 +45,7 @@ class Film
   end
 
   def should_tweet?
-    attribute_dirty?(:from) || special_offer_dirty?
+    !(only_a_days_left_update? || zero_days_left?)
   end
   
   def tweet
@@ -54,16 +54,20 @@ class Film
 
 private
 
-  def special_offer_dirty?
-    attribute_dirty?(:special_offer) && !special_offer.blank?
+  def only_a_days_left_update?
+    dirty_attributes.size == 1 && attribute_dirty?(:from) && /days left$/.match(original_values[:from]) && /days left$/.match(from)
+  end
+  
+  def zero_days_left?
+    /^(\d) days left$/.match(from) && $1.to_i == 0
   end
 
   def text_for_tweet
-    if special_offer_dirty?
-      special_offer_text
-    else
-      regular_movie_text
-    end
+    special_offer_tweet? ? special_offer_text : regular_movie_text
+  end
+
+  def special_offer_tweet?
+    attribute_dirty?(:special_offer) && !special_offer.blank?
   end
   
   def regular_movie_text
