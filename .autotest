@@ -1,0 +1,4 @@
+Autotest.add_hook :initialize do |autotest|
+  autotest.add_exception(/^\.\/db/)
+  autotest.add_exception(/\.git/)
+end
