@@ -6,13 +6,13 @@ class Film
   property  :id,            Serial
   property  :title,         String,       :length => 255,       :nullable => false
   property  :tag_line,      String,       :length => 255
-  property  :url,           String,       :length => 255
+  property  :url,           String,       :length => 255,       :nullable => false
   property  :special_offer, String,       :length => 255,       :default => ""
   property  :genre,         String
-  property  :price,         String
-  property  :certificate,   String
-  property  :year,          String
-  property  :from,          String
+  property  :price,         String,       :nullable => false
+  property  :certificate,   String,       :nullable => false
+  property  :year,          String,       :nullable => false
+  property  :from,          String,       :nullable => false
   property  :to,            String
   property  :created_on,    Date
   

@@ -4,6 +4,137 @@ describe Film, "processing films" do
   
   before(:each) do
     ::TWITTER.stub!(:status)
+    @no_title = {       :certificate    => "15", 
+                        :title          => "", 
+                        :special_offer  => "",
+                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                        :from           => "Now showing", 
+                        :genre          => "Action & Adventure, Comedy", 
+                        :year           => "2008", 
+                        :price          => "£3.99"}
+    @no_url = {         :certificate    => "15", 
+                        :title          => "Tropic Thunder", 
+                        :special_offer  => "",
+                        :url            => "", 
+                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                        :from           => "Now showing", 
+                        :genre          => "Action & Adventure, Comedy", 
+                        :year           => "2008", 
+                        :price          => "£3.99"}
+    @no_price = {       :certificate    => "15", 
+                        :title          => "Tropic Thunder", 
+                        :special_offer  => "",
+                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                        :from           => "Now showing", 
+                        :genre          => "Action & Adventure, Comedy", 
+                        :year           => "2008", 
+                        :price          => ""}
+    @no_certificate = { :certificate    => "", 
+                        :title          => "Tropic Thunder", 
+                        :special_offer  => "",
+                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                        :from           => "Now showing", 
+                        :genre          => "Action & Adventure, Comedy", 
+                        :year           => "2008", 
+                        :price          => "£3.99"}
+    @no_year = {        :certificate    => "15", 
+                        :title          => "Tropic Thunder", 
+                        :special_offer  => "",
+                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                        :from           => "Now showing", 
+                        :genre          => "Action & Adventure, Comedy", 
+                        :year           => "", 
+                        :price          => "£3.99"}
+    @no_from = {        :certificate    => "15", 
+                        :title          => "Tropic Thunder", 
+                        :special_offer  => "",
+                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                        :tag_line       => "Ben Stiller and Jack Black play actors in an action film.", 
+                        :from           => "", 
+                        :genre          => "Action & Adventure, Comedy", 
+                        :year           => "2008", 
+                        :price          => "£3.99"}
+    @minimum_info = {   :certificate    => "15", 
+                        :title          => "Tropic Thunder", 
+                        :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunder/", 
+                        :from           => "Now showing", 
+                        :year           => "2008", 
+                        :price          => "£3.99"}
+  end
+
+  it "should NOT add a film to the database if it has no title" do
+    lambda { Film.process_films([@no_title]) }.should_not change(Film, :count)
+  end
+  
+  it "should NOT tweet a film if one is added with no title" do
+    TWITTER.should_not_receive(:status)
+    Film.process_films([@no_title])
+  end
+
+  it "should NOT add a film to the database if it has no url" do
+    lambda { Film.process_films([@no_url]) }.should_not change(Film, :count)
+  end
+  
+  it "should NOT tweet a film if one is added with no url" do
+    TWITTER.should_not_receive(:status)
+    Film.process_films([@no_url])
+  end
+
+  it "should NOT add a film to the database if it has no price" do
+    lambda { Film.process_films([@no_price]) }.should_not change(Film, :count)
+  end
+  
+  it "should NOT tweet a film if one is added with no price" do
+    TWITTER.should_not_receive(:status)
+    Film.process_films([@no_price])
+  end
+
+  it "should NOT add a film to the database if it has no certificate" do
+    lambda { Film.process_films([@no_certificate]) }.should_not change(Film, :count)
+  end
+  
+  it "should NOT tweet a film if one is added with no certificate" do
+    TWITTER.should_not_receive(:status)
+    Film.process_films([@no_certificate])
+  end
+
+  it "should NOT add a film to the database if it has no year" do
+    lambda { Film.process_films([@no_year]) }.should_not change(Film, :count)
+  end
+  
+  it "should NOT tweet a film if one is added with no year" do
+    TWITTER.should_not_receive(:status)
+    Film.process_films([@no_year])
+  end
+
+  it "should NOT add a film to the database if it has no from" do
+    lambda { Film.process_films([@no_from]) }.should_not change(Film, :count)
+  end
+  
+  it "should NOT tweet a film if one is added with no from" do
+    TWITTER.should_not_receive(:status)
+    Film.process_films([@no_from])
+  end
+
+  it "should add a film to the database if it has the minimum information" do
+    lambda { Film.process_films([@minimum_info]) }.should change(Film, :count).by(1)
+  end
+  
+  it "should tweet a film if one is added with the minimum information" do
+    TWITTER.should_receive(:status)
+    Film.process_films([@minimum_info])
+  end
+end
+
+
+describe Film, "processing films - updating" do
+  
+  before(:each) do
+    ::TWITTER.stub!(:status)
     @film_0 = { :certificate    => "15", 
                 :title          => "", 
                 :special_offer  => "",
@@ -68,14 +199,6 @@ describe Film, "processing films" do
                         :price          => "£3.50"}
   end
 
-  it "should NOT add a film to the database if it has no title" do
-    lambda { Film.process_films([@film_0]) }.should_not change(Film, :count)
-  end
-
-  it "should add 3 films to the database if three are processed that are new" do
-    lambda { Film.process_films([@film_1, @film_2, @film_3]) }.should change(Film, :count).by(3)
-  end
-
   it "should update a film if it is processed with new data" do
     Film.process_films([@film_1])
     Film.process_films([@film_1_updated])
@@ -95,11 +218,6 @@ describe Film, "processing films" do
     film = Film.first(:title => "Tropic Thunder")
     film.update_attributes(:created_on => Date.today + 61)
     lambda { Film.process_films([@film_2, @film_3]) }.should change(Film, :count).by(-1)
-  end
-  
-  it "should NOT tweet an upcoming film if one is added with no title" do
-    TWITTER.should_not_receive(:status)
-    Film.process_films([@film_0])
   end
   
   it "should tweet an upcoming film if one is added" do
