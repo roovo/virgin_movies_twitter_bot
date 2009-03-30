@@ -1,3 +1,13 @@
+30 Mar 2009 - version 0.2
+-------------------------
+
+  * BUGFIX: ensure that all tweeted text is tidied
+  * FEAT:   stricter film validation so tweets won't have bits missing in them
+            if some data on the site is missing.
+  * FEAT:   tweet text reads better (I think so anyway).
+  * FEAT:   tweet all updates to film details unless it's only the number of 
+            days left that has changed or unless there are 0 days left
+  
 29 Mar 2009 - version 0.1 - Tweets away
 ---------------------------------------
 
