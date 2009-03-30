@@ -69,17 +69,17 @@ private
   def regular_movie_text
     case from
     when "Now showing"
-      "[New]"
+      "[Available Now]"
     when /^.*left$/
       "[Last Chance: #{from}]"
     else
-      "[Due #{from}]"
-    end << " #{title} (#{certificate}, #{year}, #{price}) - #{genre} - #{tag_line}"
+      "[From #{from}]"
+    end << " #{title} (#{certificate}, #{year}, #{price}) #{genre}. #{tag_line}"
   end
   
   def special_offer_text
     /^.*Available for (.*) from (.*) to (.*)/.match(special_offer)
-    "[Special Offer: #{special_offer_date_span($2, $3)} @ #{$1}] #{title} (#{certificate}, #{year}) - #{genre} - #{tag_line}"
+    "[Special Offer: #{special_offer_date_span($2, $3)} @ #{$1}] #{title} (#{certificate}, #{year}) #{genre}. #{tag_line}"
   end
   
   def special_offer_date_span(from, to)
