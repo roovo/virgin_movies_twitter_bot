@@ -1,6 +1,9 @@
+31 Mar 2009 - version 0.2.2
+---------------------------
 
-* BUGFIX: remove expired films should remove films created more than 60 days ago
-          not created 60 days in the future - doh
+  * BUGFIX: remove expired films should remove films created more than 60 days ago
+            not created 60 days in the future - doh
+  * BUGFIX: wasn't tweeting at all (oops)
 
 30 Mar 2009 - version 0.2.1
 ---------------------------

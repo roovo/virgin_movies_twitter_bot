@@ -1,6 +1,6 @@
 require 'logger'
 
-class Twitter::Client
+class LoggingTwitter < Twitter::Client
   
   def initialize(params = {})
     super

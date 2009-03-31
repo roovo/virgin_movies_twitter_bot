@@ -12,7 +12,7 @@ end
 
 # setup twitter
 twitter_config = YAML::load_file(File.dirname(__FILE__) + '/config/twitter_config.yml')
-::TWITTER = Twitter::Client.new(twitter_config)
+::TWITTER = LoggingTwitter.new(twitter_config)
 
 # do ya thing ya robo-scraping-tweeter-doode
 coming_soon_page      = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/comingsoon/')

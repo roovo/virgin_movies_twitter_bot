@@ -8,7 +8,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../lib/twitterer/twitterer.r
 FakeWeb.allow_net_connect = false
 
 twitter_config = YAML::load_file(File.dirname(__FILE__) + '/../config/twitter_config.yml')
-::TWITTER = Twitter::Client.new(twitter_config.merge('log_file' => 'test_tweets'))
+::TWITTER = LoggingTwitter.new(twitter_config.merge('log_file' => 'test_tweets'))
 
 database_path = File.expand_path(File.join(File.dirname(__FILE__), '..', 'db', 'test.db'))
 DataMapper.setup(:default, "sqlite3://#{database_path}")
