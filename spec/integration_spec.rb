@@ -21,16 +21,14 @@ describe "re-loading of same data" do
     new_releases_page     = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/newreleases/')
     films = []
     films += new_releases_page.films
-    Film.process_films(films)  
-    log_file = File.new(@log_path)
-    before_log_file_text = log_file.read
-    log_file.close
+    Film.process_films(films)
+    before_log_file_text = "before_log_file_text"
+    File.open(@log_path) { |f| before_log_file_text = f.read }  
     films = []
     films += new_releases_page.films
-    Film.process_films(films)  
-    log_file = File.new(@log_path)
-    after_log_file_text = log_file.read
-    log_file.close
+    Film.process_films(films)
+    after_log_file_text = "after_log_file_text"
+    File.open(@log_path) { |f| after_log_file_text = f.read }  
     after_log_file_text.should == before_log_file_text
   end
   
