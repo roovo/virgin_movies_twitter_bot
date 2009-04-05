@@ -35,7 +35,7 @@ describe FilmsPage, "parsing films pages" do
                                         { :certificate    => "15", 
                                           :title          => "Tropic Thunder: The Director's Cut", 
                                           :url            => "http://moviesondemand.virginmedia.com/movies/tropicthunderthedirectorscut/", 
-                                          :tag_line       => "Director’s cut of Ben Stiller’s crazy comedy.", 
+                                          :tag_line       => "Director's cut of Ben Stiller's crazy comedy.", 
                                           :from           => "Now showing", 
                                           :genre          => "Action & Adventure, Comedy", 
                                           :year           => "2008", 

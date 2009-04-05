@@ -17,11 +17,12 @@ class FilmsPage
     films = []
     @page.xpath("//div[@class='movie-snippet']").each do |film_block|
       begin
+       
         details_url = "http://#{@host}" + film_block.xpath("h4/a").attr('href')
         
         films << { :title         => tidy(film_block.xpath("h4/a").text),
                    :tag_line      => tidy(film_block.xpath("p[1]").text),
-                   :special_offer => tidy(film_block.xpath("p[2]").text),
+                   :special_offer => tidy(film_block.xpath("p[2]").text).gsub(/[^A-Za-z0-9 £\.\/]/, ''),
                    :url           => details_url                            }.merge(film_details(details_url))
       rescue
         # do nothing
@@ -37,7 +38,7 @@ private
     {
       :from         => tidy(page.xpath(FROM_XPATH)[0]),
       :genre        => page.xpath(GENRE_XPATH).map { |t| tidy(t) }.join(', '),
-      :price        => tidy(page.xpath(PRICE_XPATH)[0]),
+      :price        => tidy(page.xpath(PRICE_XPATH)[0]).gsub(/[^0-9£\.p]/, ''),
       :certificate  => tidy(page.xpath(CERTIFICATE_XPATH)[0]),
       :year         => tidy(page.xpath(YEAR_XPATH)[0])
     }
@@ -47,3 +48,4 @@ private
     CGI.unescapeHTML(text.to_s.strip)
   end
 end
+
