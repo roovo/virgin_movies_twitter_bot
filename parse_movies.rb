@@ -1,3 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+require 'bundler'
+
+Bundler.setup
+
 require File.expand_path(File.dirname(__FILE__) + '/lib/virgin_movies/virgin_movies.rb')
 require File.expand_path(File.dirname(__FILE__) + '/lib/twitterer/twitterer.rb')
 
@@ -11,19 +18,25 @@ rescue Exception => e
 end
 
 # setup twitter
-twitter_config = YAML::load_file(File.dirname(__FILE__) + '/config/twitter_config.yml')
-::TWITTER = LoggingTwitter.new(twitter_config)
+config = ConfigStore.new(File.dirname(__FILE__) + '/config/twitter_config.yml')
+
+oauth = Twitter::OAuth.new(config['consumer_token'], config['consumer_secret'])
+oauth.authorize_from_access(config['access_token'], config['access_secret'])
+
+::TWITTER = Twitter::Base.new(oauth)
 
 # do ya thing ya robo-scraping-tweeter-doode
-coming_soon_page      = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/comingsoon/')
-new_releases_page     = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/newreleases/')
-last_chance_page      = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/lastchancetosee/')
-special_offers_page   = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/specialoffers/')
+#coming_soon_page      = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/comingsoon/')
+new_releases_page     = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/new_releases/')
+last_chance_page      = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/last_chance_to_see/')
+special_offers_page   = FilmsPage.new('http://moviesondemand.virginmedia.com/movies/groups/special_offers/')
 
 films = []
-films += coming_soon_page.films
+#films += coming_soon_page.films
 films += new_releases_page.films
 films += last_chance_page.films
 films += special_offers_page.films
+
+#films.each { |f| puts f.inspect }
 
 Film.process_films(films)

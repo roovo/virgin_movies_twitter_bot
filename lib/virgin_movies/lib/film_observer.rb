@@ -5,11 +5,13 @@ class FilmObserver
 
   after :create do
     return unless should_tweet?
-    TWITTER.status(:post, tweet)
+    #puts "CREATE: " + tweet
+    ::TWITTER.update(tweet)
   end
 
   after :update do
     return unless should_tweet?
-    TWITTER.status(:post, tweet)
+    #puts "UPDATE: " + tweet
+    ::TWITTER.update(tweet)
   end
 end
